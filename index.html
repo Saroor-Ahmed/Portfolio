@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saroor Ahmed | Strategic Data Analyst</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Import Luxury Fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;400;500;600&display=swap');
+
+        :root {
+            --bg-color: #050505; /* Deepest Black */
+            --card-bg: rgba(20, 20, 20, 0.6);
+            --text-main: #f5f5f5;
+            --text-muted: #a3a3a3;
+            
+            /* Luxury Gold Palette */
+            --gold-light: #f3e5ab; /* Champagne */
+            --gold-main: #d4af37;  /* Classic Gold */
+            --gold-dark: #aa8c2c;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            overflow-x: hidden;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+        }
+
+        h1, h2, h3, .brand-font {
+            font-family: 'Cinzel', serif;
+        }
+
+        /* Hide scrollbars */
+        body::-webkit-scrollbar { display: none; }
+        body { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Luxury Card Style */
+        .luxury-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(212, 175, 55, 0.15); /* Subtle Gold Border */
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.8);
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .luxury-card:hover {
+            border-color: rgba(212, 175, 55, 0.4);
+            box-shadow: 0 20px 40px -10px rgba(212, 175, 55, 0.05); /* Golden Glow */
+            transform: translateY(-4px);
+        }
+
+        /* Gold Gradient Text */
+        .text-gold-gradient {
+            background: linear-gradient(to right, #f3e5ab, #d4af37, #f3e5ab);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 4s linear infinite;
+        }
+
+        @keyframes shine {
+            to { background-position: 200% center; }
+        }
+
+        /* Slow Spin Animation for Profile Border */
+        @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .animate-spin-slow {
+            animation: spin-slow 12s linear infinite;
+        }
+
+        /* Button Styling */
+        .btn-gold {
+            background: transparent;
+            border: 1px solid var(--gold-main);
+            color: var(--gold-main);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            z-index: 1;
+        }
+
+        .btn-gold::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 0%; height: 100%;
+            background: var(--gold-main);
+            z-index: -1;
+            transition: all 0.3s ease;
+        }
+
+        .btn-gold:hover {
+            color: #000;
+        }
+
+        .btn-gold:hover::before {
+            width: 100%;
+        }
+
+        .glass-nav {
+            background: rgba(5, 5, 5, 0.85);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+        }
+
+        canvas {
+            position: fixed;
+            top: 0; left: 0;
+            z-index: 0;
+            opacity: 1;
+        }
+
+        section {
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Custom Selection */
+        ::selection {
+            background: var(--gold-main);
+            color: #000;
+        }
+        
+        /* Thin elegant separator */
+        .separator {
+            width: 60px;
+            height: 1px;
+            background: var(--gold-main);
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- The 3D Canvas -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass-nav transition-all duration-500" id="navbar">
+        <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
+            <!-- PERSONAL BRAND LOGO -->
+            <a href="#" class="text-xl tracking-widest brand-font font-bold text-white hover:text-gold-gradient transition-all">
+                SAROOR<span class="text-[#d4af37]">AHMED</span>
+            </a>
+            
+            <div class="hidden md:flex space-x-12 text-xs uppercase tracking-[0.2em] text-gray-400 font-medium">
+                <a href="#home" class="hover:text-[#d4af37] transition-colors duration-300">Profile</a>
+                <a href="#expertise" class="hover:text-[#d4af37] transition-colors duration-300">Skills</a>
+                <a href="#portfolio" class="hover:text-[#d4af37] transition-colors duration-300">Work</a>
+                <a href="#inquiry" class="hover:text-[#d4af37] transition-colors duration-300">Contact</a>
+            </div>
+
+            <button id="mobile-menu-btn" class="md:hidden text-[#d4af37] text-lg focus:outline-none">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-black border-b border-[#333] absolute w-full left-0 top-full">
+            <div class="flex flex-col p-6 space-y-6 text-center text-sm uppercase tracking-widest">
+                <a href="#home" class="text-gray-300 hover:text-[#d4af37]">Profile</a>
+                <a href="#expertise" class="text-gray-300 hover:text-[#d4af37]">Skills</a>
+                <a href="#portfolio" class="text-gray-300 hover:text-[#d4af37]">Work</a>
+                <a href="#inquiry" class="text-gray-300 hover:text-[#d4af37]">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        
+        <!-- Hero Section -->
+        <section id="home" class="min-h-screen flex items-center px-6 relative">
+            <!-- Vignette for luxury feel -->
+            <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#050505_100%)] pointer-events-none"></div>
+
+            <div class="max-w-7xl mx-auto w-full pt-20">
+                <!-- Mobile Optimized Layout: Flex col-reverse puts image on top on mobile, grid on desktop -->
+                <div class="flex flex-col-reverse md:grid md:grid-cols-2 gap-10 md:gap-16 items-center">
+                    
+                    <!-- Left Column: Text -->
+                    <div class="space-y-8 animate-fade-in-up w-full text-center md:text-left z-10">
+                        <div class="inline-block border-b border-[#d4af37] pb-1">
+                            <p class="text-[#d4af37] text-xs uppercase tracking-[0.3em]">Senior Data Analyst</p>
+                        </div>
+                        
+                        <h1 class="text-5xl md:text-7xl leading-tight">
+                            Insight with <br>
+                            <span class="text-gold-gradient">Precision.</span>
+                        </h1>
+                        
+                        <p class="text-gray-400 text-sm md:text-base leading-relaxed max-w-md mx-auto md:mx-0 font-light tracking-wide">
+                            I transform complex datasets into high-value strategic assets. Unlocking hidden patterns through Python, SQL, and advanced visualization.
+                        </p>
+                        
+                        <div class="pt-8 flex flex-wrap justify-center md:justify-start gap-6">
+                            <a href="#portfolio" class="btn-gold px-10 py-4 text-xs font-bold uppercase tracking-[0.2em]">
+                                View Analysis
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- =================================================================== -->
+                    <!-- [START] PROFILE PICTURE SECTION                                     -->
+                    <!-- =================================================================== -->
+                    <div class="flex justify-center md:justify-end items-center z-10 animate-fade-in-up w-full">
+                        <div class="relative w-64 h-64 lg:w-80 lg:h-80 rounded-full border-2 border-[#d4af37] p-2 shadow-[0_0_30px_rgba(212,175,55,0.3)] bg-black/50 backdrop-blur-sm">
+                            
+                            <!-- 
+                                CRITICAL: 
+                                This file 'Gemini_Generated_Image_liguh4liguh4ligu.jpg' MUST exist in the 
+                                same folder as this index.html file on your server/computer.
+                            -->
+                            <img 
+                                src="C:\Users\Hamza PC\Desktop\PITP\Gemini_Generated_Image_liguh4liguh4ligu.png" 
+                                
+                                alt="Saroor Ahmed" 
+                                class="w-full h-full object-cover rounded-full grayscale hover:grayscale-0 transition-all duration-500"
+                            >
+                            
+                            <!-- Spinning Gold Border Effect -->
+                            <div class="absolute inset-0 rounded-full border-t-2 border-[#d4af37] animate-spin-slow pointer-events-none opacity-70"></div>
+                        </div>
+                    </div>
+                    <!-- =================================================================== -->
+                    <!-- [END] PROFILE PICTURE SECTION                                       -->
+                    <!-- =================================================================== -->
+
+                </div>
+            </div>
+            
+            <div class="absolute bottom-12 right-12 hidden md:block text-right">
+                <p class="text-[#d4af37] text-xs tracking-[0.2em] font-light">DATA . STRATEGY . VALUE</p>
+                <div class="h-12 w-[1px] bg-[#d4af37] ml-auto mt-4 opacity-50"></div>
+            </div>
+        </section>
+
+        <!-- Expertise Section -->
+        <section id="expertise" class="min-h-screen py-32 px-6 flex items-center relative">
+            <div class="max-w-7xl mx-auto w-full">
+                <div class="flex flex-col md:flex-row items-start gap-20">
+                    
+                    <!-- Left: Title -->
+                    <div class="w-full md:w-1/3 sticky top-32">
+                        <h2 class="text-4xl md:text-5xl mb-6">Technical <span class="text-[#d4af37]">Arsenal</span></h2>
+                        <div class="separator"></div>
+                        <p class="text-gray-400 font-light leading-relaxed mb-8">
+                            My methodology combines rigorous statistical science with executive-level strategy. I don't just report numbers; I architect growth.
+                        </p>
+                    </div>
+
+                    <!-- Right: Cards -->
+                    <div class="w-full md:w-2/3 grid grid-cols-1 gap-8">
+                        <!-- Card 1 -->
+                        <div class="luxury-card p-10 flex gap-6 items-start group">
+                            <div class="text-[#d4af37] text-3xl pt-1 opacity-80 group-hover:opacity-100 transition-opacity">
+                                <i class="fab fa-python"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl mb-3 tracking-wide">Python & Machine Learning</h3>
+                                <p class="text-gray-500 text-sm font-light leading-relaxed group-hover:text-gray-300 transition-colors">
+                                    Utilizing Pandas, NumPy, and Scikit-Learn to build predictive models that forecast market trends, allowing businesses to act proactively.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Card 2 -->
+                        <div class="luxury-card p-10 flex gap-6 items-start group">
+                            <div class="text-[#d4af37] text-3xl pt-1 opacity-80 group-hover:opacity-100 transition-opacity">
+                                <i class="fas fa-database"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl mb-3 tracking-wide">SQL Architecture</h3>
+                                <p class="text-gray-500 text-sm font-light leading-relaxed group-hover:text-gray-300 transition-colors">
+                                    Constructing complex queries, CTEs, and robust data pipelines to ensure the "Single Source of Truth" is always accurate and accessible.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Card 3 -->
+                        <div class="luxury-card p-10 flex gap-6 items-start group">
+                            <div class="text-[#d4af37] text-3xl pt-1 opacity-80 group-hover:opacity-100 transition-opacity">
+                                <i class="fas fa-chart-pie"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl mb-3 tracking-wide">Executive Visualization</h3>
+                                <p class="text-gray-500 text-sm font-light leading-relaxed group-hover:text-gray-300 transition-colors">
+                                    Crafting bespoke Tableau and PowerBI dashboards designed specifically for C-Suite consumption and rapid, evidence-based decision making.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Portfolio Section -->
+        <section id="portfolio" class="py-32 px-6 relative bg-black/50">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-20">
+                    <p class="text-[#d4af37] text-xs uppercase tracking-[0.3em] mb-4">Selected Case Studies</p>
+                    <h2 class="text-4xl md:text-5xl">Impactful <span class="italic text-gray-500">Analysis</span></h2>
+                </div>
+                
+                <div class="grid md:grid-cols-3 gap-10">
+                    <!-- Project 1: Sales Forecast -->
+                    <div class="luxury-card group h-[450px] flex flex-col relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-6 z-10">
+                            <i class="fas fa-arrow-right -rotate-45 text-[#d4af37] opacity-0 group-hover:opacity-100 transition-all duration-500"></i>
+                        </div>
+                        <div class="h-1/2 bg-gradient-to-b from-[#111] to-[#050505] flex items-center justify-center p-8 relative">
+                            <!-- Abstract Representation -->
+                            <div class="w-24 h-24 border border-[#d4af37] rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-700">
+                                <div class="w-16 h-16 bg-[#d4af37] rounded-full opacity-10"></div>
+                                <i class="fas fa-chart-line text-[#d4af37] text-2xl absolute"></i>
+                            </div>
+                        </div>
+                        <div class="h-1/2 p-8 flex flex-col justify-between">
+                            <div>
+                                <h3 class="text-lg mb-2">Sales Forecasting</h3>
+                                <p class="text-xs text-gray-500 uppercase tracking-wider mb-4">Predictive Modeling</p>
+                                <p class="text-gray-400 text-sm font-light leading-relaxed line-clamp-3">
+                                    Developed a time-series model (ARIMA) using 3 years of historical sales data, improving inventory efficiency by 15% and reducing waste.
+                                </p>
+                            </div>
+                            <div class="flex gap-4 text-[#d4af37] text-xs tracking-widest uppercase opacity-60">
+                                <span>Python</span> • <span>Pandas</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 2: Customer Churn -->
+                    <div class="luxury-card group h-[450px] flex flex-col relative overflow-hidden">
+                         <div class="absolute top-0 right-0 p-6 z-10">
+                            <i class="fas fa-arrow-right -rotate-45 text-[#d4af37] opacity-0 group-hover:opacity-100 transition-all duration-500"></i>
+                        </div>
+                        <div class="h-1/2 bg-gradient-to-b from-[#111] to-[#050505] flex items-center justify-center p-8 relative">
+                            <div class="w-24 h-24 border border-gray-700 group-hover:border-[#d4af37] transition-colors duration-500 rotate-45 flex items-center justify-center group-hover:rotate-90">
+                                <i class="fas fa-users text-gray-500 group-hover:text-[#d4af37] text-2xl -rotate-45 group-hover:-rotate-90 transition-all duration-500"></i>
+                            </div>
+                        </div>
+                        <div class="h-1/2 p-8 flex flex-col justify-between">
+                            <div>
+                                <h3 class="text-lg mb-2">Churn Analysis</h3>
+                                <p class="text-xs text-gray-500 uppercase tracking-wider mb-4">Behavioral Analytics</p>
+                                <p class="text-gray-400 text-sm font-light leading-relaxed line-clamp-3">
+                                    Identified at-risk customer segments through SQL analysis and visualized retention strategies in an interactive Tableau dashboard.
+                                </p>
+                            </div>
+                            <div class="flex gap-4 text-[#d4af37] text-xs tracking-widest uppercase opacity-60">
+                                <span>SQL</span> • <span>Tableau</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 3: Market Basket -->
+                    <div class="luxury-card group h-[450px] flex flex-col relative overflow-hidden">
+                         <div class="absolute top-0 right-0 p-6 z-10">
+                            <i class="fas fa-arrow-right -rotate-45 text-[#d4af37] opacity-0 group-hover:opacity-100 transition-all duration-500"></i>
+                        </div>
+                        <div class="h-1/2 bg-gradient-to-b from-[#111] to-[#050505] flex items-center justify-center p-8 relative">
+                            <div class="w-full h-px bg-gray-800 absolute top-1/2"></div>
+                            <div class="w-1 h-12 bg-[#d4af37] absolute left-1/2 -translate-x-1/2 -translate-y-1/2 group-hover:h-24 transition-all duration-500"></div>
+                             <div class="w-1 h-8 bg-gray-600 absolute left-1/3 -translate-x-1/2 -translate-y-1/2 group-hover:h-12 transition-all duration-500 delay-75"></div>
+                              <div class="w-1 h-16 bg-gray-600 absolute left-2/3 -translate-x-1/2 -translate-y-1/2 group-hover:h-8 transition-all duration-500 delay-100"></div>
+                        </div>
+                        <div class="h-1/2 p-8 flex flex-col justify-between">
+                            <div>
+                                <h3 class="text-lg mb-2">Market Basket</h3>
+                                <p class="text-xs text-gray-500 uppercase tracking-wider mb-4">Association Rules</p>
+                                <p class="text-gray-400 text-sm font-light leading-relaxed line-clamp-3">
+                                    Utilized the Apriori algorithm to uncover product associations, directly influencing a new cross-selling strategy that boosted average cart value.
+                                </p>
+                            </div>
+                            <div class="flex gap-4 text-[#d4af37] text-xs tracking-widest uppercase opacity-60">
+                                <span>R</span> • <span>Mining</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Inquiry Section -->
+        <section id="inquiry" class="min-h-[60vh] flex items-center justify-center px-6 pb-20">
+            <div class="max-w-3xl w-full text-center relative">
+                
+                <h2 class="text-4xl md:text-6xl mb-8">Initiate <span class="text-gold-gradient">Dialogue</span></h2>
+                <div class="separator mx-auto mb-10"></div>
+                <p class="text-gray-400 font-light mb-12 max-w-lg mx-auto leading-relaxed">
+                    I am currently open for full-time roles and exclusive consulting opportunities. Let's discuss how my data expertise can solve your business challenges.
+                </p>
+
+                <div class="flex flex-col md:flex-row justify-center gap-8">
+                    <a href="mailto:your.email@example.com" class="btn-gold px-12 py-4 text-xs font-bold uppercase tracking-[0.2em] inline-block">
+                        Send Inquiry
+                    </a>
+                </div>
+                
+                <div class="mt-20 flex justify-center gap-12 opacity-40">
+                    <i class="fab fa-linkedin text-2xl hover:text-[#d4af37] transition-colors cursor-pointer"></i>
+                    <i class="fab fa-github text-2xl hover:text-[#d4af37] transition-colors cursor-pointer"></i>
+                    <i class="fas fa-envelope text-2xl hover:text-[#d4af37] transition-colors cursor-pointer"></i>
+                </div>
+                
+                <p class="mt-12 text-[#444] text-[10px] tracking-[0.2em] uppercase">
+                    © 2024 Saroor Ahmed. All Rights Reserved.
+                </p>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // --- THREE.JS LUXURY THEME SETUP ---
+        const canvas = document.querySelector('#bg-canvas');
+        const scene = new THREE.Scene();
+        
+        // Deep Black Fog for "Void" aesthetic
+        scene.fog = new THREE.FogExp2(0x050505, 0.002); 
+
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({
+            canvas: canvas,
+            antialias: true,
+            alpha: true
+        });
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        // --- OBJECTS ---
+        
+        // 1. "Golden Dust" (Background Particles)
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 800;
+        const posArray = new Float32Array(particlesCount * 3);
+
+        for(let i = 0; i < particlesCount * 3; i++) {
+            posArray[i] = (Math.random() - 0.5) * 60; // Spread wide
+        }
+
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+        const particlesMaterial = new THREE.PointsMaterial({
+            size: 0.05,
+            color: 0xd4af37, // Gold
+            transparent: true,
+            opacity: 0.6,
+            blending: THREE.AdditiveBlending
+        });
+
+        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particlesMesh);
+
+        // 2. The "Global Network" (Main Object)
+        // A sphere with visible connections (Wireframe)
+        const globeGeometry = new THREE.IcosahedronGeometry(9, 2);
+        
+        // High-end gold wireframe
+        const globeMaterial = new THREE.MeshBasicMaterial({ 
+            color: 0xd4af37,
+            wireframe: true,
+            transparent: true,
+            opacity: 0.15 // Delicate lines
+        });
+        
+        const globe = new THREE.Mesh(globeGeometry, globeMaterial);
+        
+        // Add "Nodes" to the globe vertices for a jeweled look
+        const nodesGeometry = new THREE.IcosahedronGeometry(9, 2);
+        const nodesMaterial = new THREE.PointsMaterial({
+            color: 0xffffff, // White diamonds at intersections
+            size: 0.08,
+            transparent: true,
+            opacity: 0.8
+        });
+        const nodes = new THREE.Points(nodesGeometry, nodesMaterial);
+        
+        const globeGroup = new THREE.Group();
+        globeGroup.add(globe);
+        globeGroup.add(nodes);
+        
+        // Position on the right
+        globeGroup.position.x = 12;
+        globeGroup.position.z = -20;
+        
+        scene.add(globeGroup);
+
+        // 3. Floating Glass Shards (Abstract Data)
+        const shardsGroup = new THREE.Group();
+        const shardGeom = new THREE.OctahedronGeometry(1, 0);
+        const shardMat = new THREE.MeshPhysicalMaterial({
+            color: 0x222222,
+            metalness: 0.1,
+            roughness: 0,
+            transmission: 0.6, // Glass-like
+            thickness: 1,
+            clearcoat: 1,
+            clearcoatRoughness: 0
+        });
+
+        for(let i=0; i<6; i++){
+            const mesh = new THREE.Mesh(shardGeom, shardMat);
+            mesh.position.set(
+                (Math.random() - 0.5) * 40,
+                (Math.random() - 0.5) * 40,
+                (Math.random() - 0.5) * 10 - 15
+            );
+            mesh.scale.setScalar(Math.random() * 2 + 1);
+            
+             // Wireframe overlay for the shard (Gold edges)
+            const edgeGeo = new THREE.EdgesGeometry(shardGeom);
+            const edgeMat = new THREE.LineBasicMaterial({ color: 0xd4af37, transparent: true, opacity: 0.3 });
+            const edges = new THREE.LineSegments(edgeGeo, edgeMat);
+            mesh.add(edges);
+
+            mesh.userData = {
+                rotSpeed: Math.random() * 0.005,
+                floatSpeed: Math.random() * 0.005
+            };
+            shardsGroup.add(mesh);
+        }
+        scene.add(shardsGroup);
+
+        // --- LIGHTING ---
+        // Crucial for the metallic/glass look
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
+        scene.add(ambientLight);
+
+        // Gold Spotlight
+        const spotLight = new THREE.SpotLight(0xd4af37, 2);
+        spotLight.position.set(10, 20, 10);
+        spotLight.angle = 0.5;
+        spotLight.penumbra = 1;
+        scene.add(spotLight);
+        
+        // Rim light (White/Blueish) for contrast
+        const pointLight = new THREE.PointLight(0xe0e0ff, 1);
+        pointLight.position.set(-10, -10, -10);
+        scene.add(pointLight);
+
+
+        // --- ANIMATION & INTERACTION ---
+        let mouseX = 0;
+        let mouseY = 0;
+        const windowHalfX = window.innerWidth / 2;
+        const windowHalfY = window.innerHeight / 2;
+
+        document.addEventListener('mousemove', (event) => {
+            mouseX = (event.clientX - windowHalfX) * 0.001;
+            mouseY = (event.clientY - windowHalfY) * 0.001;
+        });
+
+        // Add touch interaction for mobile
+        document.addEventListener('touchmove', (event) => {
+            if (event.touches.length > 0) {
+                mouseX = (event.touches[0].clientX - windowHalfX) * 0.001;
+                mouseY = (event.touches[0].clientY - windowHalfY) * 0.001;
+            }
+        });
+
+        let scrollY = 0;
+        window.addEventListener('scroll', () => {
+            scrollY = window.scrollY;
+        });
+
+        const clock = new THREE.Clock();
+
+        function animate() {
+            const time = clock.getElapsedTime();
+
+            // Rotate Particles gently
+            particlesMesh.rotation.y = time * 0.02;
+            particlesMesh.rotation.x = mouseX * 0.1;
+
+            // Rotate Globe
+            globeGroup.rotation.y = time * 0.05 + mouseX * 0.2;
+            globeGroup.rotation.x = mouseY * 0.1;
+            
+            // Scroll interaction for globe
+            globeGroup.position.y = scrollY * 0.01;
+
+            // Animate Shards
+            shardsGroup.children.forEach(mesh => {
+                mesh.rotation.x += mesh.userData.rotSpeed;
+                mesh.rotation.y += mesh.userData.rotSpeed;
+                mesh.position.y += Math.sin(time + mesh.position.x) * 0.005;
+            });
+
+            // Camera float
+            camera.position.y = -scrollY * 0.005;
+
+            renderer.render(scene, camera);
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+
+        // --- RESIZE ---
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // --- UI Logic ---
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Smooth scroll fix
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                mobileMenu.classList.add('hidden');
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+    </script>
+</body>
+</html>
