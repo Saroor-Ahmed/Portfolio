@@ -140,9 +140,13 @@
 
         canvas {
             position: fixed;
-            top: 0; left: 0;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             z-index: 0;
             opacity: 1;
+            display: block;
         }
 
         section {
@@ -187,6 +191,81 @@
         .animate-fade-in-up {
             animation: fadeInUp 0.6s ease-out forwards;
         }
+
+        /* --- SLIDER STYLES --- */
+        .slider-viewport {
+            overflow: hidden;
+            position: relative;
+            border-radius: 0.75rem; /* rounded-xl */
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            aspect-ratio: 16/9;
+            margin-bottom: 2.5rem;
+            background: rgba(0,0,0,0.3);
+            box-shadow: 0 20px 50px -10px rgba(0,0,0,0.5);
+        }
+        .slider-track {
+            display: flex;
+            transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+            height: 100%;
+            width: 100%;
+        }
+        .slide {
+            min-width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* Filter to make placeholders look more 'dashboard-like' in dark mode */
+            filter: brightness(0.8) contrast(1.2); 
+        }
+        .slide-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            color: #f5f5f5;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            text-align: center;
+        }
+        .slider-nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0,0,0,0.6);
+            border: 1px solid #d4af37;
+            color: #d4af37;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.3s;
+            opacity: 0; /* Hidden by default, show on hover of container */
+        }
+        .slider-viewport:hover .slider-nav-btn {
+            opacity: 1;
+        }
+        .slider-nav-btn:hover {
+            background: #d4af37;
+            color: #000;
+            scale: 1.1;
+        }
+        .prev-btn { left: 20px; }
+        .next-btn { right: 20px; }
+
     </style>
 </head>
 <body class="antialiased">
@@ -206,6 +285,7 @@
                 <a href="#home" class="hover:text-[#d4af37] transition-colors duration-300">Profile</a>
                 <a href="#expertise" class="hover:text-[#d4af37] transition-colors duration-300">Skills</a>
                 <a href="#portfolio" class="hover:text-[#d4af37] transition-colors duration-300">Projects</a>
+                <a href="#reviews" class="hover:text-[#d4af37] transition-colors duration-300">Reviews</a>
                 <a href="#inquiry" class="hover:text-[#d4af37] transition-colors duration-300">Contact</a>
             </div>
 
@@ -220,6 +300,7 @@
                 <a href="#home" class="hover:text-[#d4af37]">Profile</a>
                 <a href="#expertise" class="hover:text-[#d4af37]">Skills</a>
                 <a href="#portfolio" class="hover:text-[#d4af37]">Projects</a>
+                <a href="#reviews" class="hover:text-[#d4af37]">Reviews</a>
                 <a href="#inquiry" class="hover:text-[#d4af37]">Contact</a>
             </div>
         </div>
@@ -264,7 +345,8 @@
                     <div class="flex justify-center md:justify-end items-center z-10 animate-fade-in-up w-full">
                         <div class="relative w-56 h-56 md:w-64 md:h-64 lg:w-80 lg:h-80 rounded-full border-2 border-[#d4af37] p-2 shadow-[0_0_30px_rgba(212,175,55,0.3)] backdrop-blur-sm" style="background-color: var(--card-bg);">
                             <img 
-                                src="image.jpg" alt="Saroor Ahmed" 
+                                src="Image.jpg" 
+                                alt="Saroor Ahmed" 
                                 class="w-full h-full object-cover rounded-full grayscale hover:grayscale-0 transition-all duration-500"
                             >
                             <div class="absolute inset-0 rounded-full border-t-2 border-[#d4af37] animate-spin-slow pointer-events-none opacity-70"></div>
@@ -504,6 +586,33 @@
             </div>
         </section>
 
+        <!-- ========================================== -->
+        <!-- REVIEWS / COMMENTS SECTION                 -->
+        <!-- ========================================== -->
+        <section id="reviews" class="min-h-screen py-32 px-6 relative">
+            <div class="max-w-7xl mx-auto w-full">
+                
+                <div class="flex flex-col md:flex-row items-end gap-10 mb-20">
+                    <div class="w-full md:w-1/2">
+                        <!-- Removed Admin Toggle Lock Icon -->
+                        <p class="text-[#d4af37] text-xs uppercase tracking-[0.3em] mb-4">
+                            Client Feedback
+                        </p>
+                        <h2 class="text-4xl md:text-5xl">Trusted <span class="italic" style="color: var(--text-muted);">Partnerships</span></h2>
+                    </div>
+                    <!-- Removed 'Write a Review' Button container -->
+                </div>
+
+                <!-- Reviews Grid -->
+                <div id="reviews-grid" class="grid md:grid-cols-2 gap-8">
+                    <!-- Reviews will be injected here via JS -->
+                </div>
+
+                <!-- Removed Review Form Container -->
+
+            </div>
+        </section>
+
         <!-- Inquiry Section -->
         <section id="inquiry" class="min-h-[60vh] flex items-center justify-center px-6 pb-20">
             <!-- Added relative and z-20 to ensure content is above background layers -->
@@ -516,10 +625,10 @@
                 </p>
 
                 <div class="flex flex-col md:flex-row justify-center gap-8">
-                    <!-- Added z-30 to button to guarantee clickability -->
-                    <a href="mailto:saroorq@gmail.com" class="btn-gold px-12 py-4 text-xs font-bold uppercase tracking-[0.2em] inline-block relative z-30">
-                        Send Inquiry
-                    </a>
+                    <!-- Modified to use JavaScript for better UX on PC -->
+                    <button onclick="handleInquiry()" class="btn-gold px-12 py-4 text-xs font-bold uppercase tracking-[0.2em] inline-block relative z-30 cursor-pointer">
+                        <span id="inquiry-text">Send Inquiry</span>
+                    </button>
                 </div>
                 
                 <div class="mt-20 flex justify-center gap-12 opacity-60">
@@ -552,30 +661,42 @@
         <div class="min-h-screen px-6 py-12">
             
             <!-- Close Button -->
-            <button onclick="closeProject()" class="fixed top-6 right-6 z-50 p-4 text-[#d4af37] hover:scale-110 transition-transform">
-                <i class="fas fa-times text-3xl"></i>
+            <button onclick="closeProject()" class="fixed top-6 right-6 z-50 p-4 text-[#d4af37] hover:scale-110 transition-transform bg-black/50 rounded-full w-12 h-12 flex items-center justify-center border border-[#d4af37]/30">
+                <i class="fas fa-times text-xl"></i>
             </button>
 
-            <div class="max-w-4xl mx-auto pt-10">
+            <div class="max-w-5xl mx-auto pt-4">
+                
                 <!-- Header -->
-                <div class="mb-12 border-b border-[#d4af37]/30 pb-6">
-                    <p id="project-category" class="text-[#d4af37] text-xs uppercase tracking-[0.3em] mb-4">Category</p>
-                    <h2 id="project-title" class="text-4xl md:text-6xl font-bold mb-4">Project Title</h2>
-                    <div id="project-tags" class="flex gap-4 text-xs tracking-widest uppercase opacity-60 mt-4" style="color: var(--text-muted);">
+                <div class="mb-8 border-b border-[#d4af37]/30 pb-6 text-center md:text-left">
+                    <p id="project-category" class="text-[#d4af37] text-xs uppercase tracking-[0.3em] mb-2">Category</p>
+                    <h2 id="project-title" class="text-3xl md:text-5xl font-bold mb-4">Project Title</h2>
+                    <div id="project-tags" class="flex flex-wrap justify-center md:justify-start gap-4 text-xs tracking-widest uppercase opacity-60 mt-2" style="color: var(--text-muted);">
                         <!-- Tags injected via JS -->
                     </div>
+                </div>
+
+                <!-- IMAGE SLIDER CONTAINER -->
+                <div id="project-slider-container" class="slider-viewport">
+                    <div id="slider-track" class="slider-track">
+                        <!-- Slides injected via JS -->
+                    </div>
+                    <!-- Navigation Buttons -->
+                    <button class="slider-nav-btn prev-btn" onclick="moveSlide(-1)"><i class="fas fa-chevron-left"></i></button>
+                    <button class="slider-nav-btn next-btn" onclick="moveSlide(1)"><i class="fas fa-chevron-right"></i></button>
                 </div>
 
                 <!-- Content Area -->
                 <div class="grid md:grid-cols-3 gap-12">
                     <div class="md:col-span-2 space-y-6">
                         <div class="prose prose-invert max-w-none">
+                            <h3 class="text-xl font-bold mb-2 text-[#d4af37]">Project Overview</h3>
                             <p id="project-description" class="text-lg leading-relaxed font-light" style="color: var(--text-main);">
                                 Detailed description goes here...
                             </p>
                             
-                            <h3 class="text-2xl mt-8 mb-4 font-bold" style="color: var(--text-main);">Key Insights</h3>
-                            <ul id="project-insights" class="list-disc pl-5 space-y-2 font-light" style="color: var(--text-muted);">
+                            <h3 class="text-xl mt-8 mb-4 font-bold text-[#d4af37]">Key Insights & Methodology</h3>
+                            <ul id="project-insights" class="list-disc pl-5 space-y-3 font-light" style="color: var(--text-muted);">
                                 <!-- Insights injected via JS -->
                             </ul>
                         </div>
@@ -584,21 +705,21 @@
                     <!-- Sidebar Info -->
                     <div class="space-y-8">
                         <div class="luxury-card p-6">
-                            <h4 class="text-[#d4af37] text-xs uppercase tracking-widest mb-4">Technologies</h4>
+                            <h4 class="text-[#d4af37] text-xs uppercase tracking-widest mb-4 border-b border-[#d4af37]/20 pb-2">Technologies</h4>
                             <div id="project-tech-stack" class="flex flex-wrap gap-2">
                                 <!-- Tech pills injected via JS -->
                             </div>
                         </div>
 
                         <div class="luxury-card p-6">
-                            <h4 class="text-[#d4af37] text-xs uppercase tracking-widest mb-4">Impact</h4>
+                            <h4 class="text-[#d4af37] text-xs uppercase tracking-widest mb-4 border-b border-[#d4af37]/20 pb-2">Business Impact</h4>
                             <p id="project-impact" class="text-2xl font-bold" style="color: var(--text-main);">+15% Efficiency</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Footer / Nav -->
-                <div class="mt-20 pt-10 border-t border-[#d4af37]/20 flex justify-center">
+                <div class="mt-16 pt-10 border-t border-[#d4af37]/20 flex justify-center">
                     <button onclick="closeProject()" class="btn-gold px-12 py-4 text-xs font-bold uppercase tracking-[0.2em]">
                         Back to Portfolio
                     </button>
@@ -614,6 +735,36 @@
                 category: 'Predictive Modeling',
                 title: 'Sales Forecasting Engine',
                 tags: ['Python', 'ARIMA', 'Pandas', 'Matplotlib'],
+                
+                // ==================================================================================
+                // [!] IMAGE SLIDER CONFIGURATION
+                // You can add as many images as you like here. Just copy the structure below.
+                // ==================================================================================
+                images: [
+                    { 
+                        url: 'https://placehold.co/1200x675/1a1a1a/d4af37?text=Sales+Trend+Analysis', 
+                        caption: 'Historical Sales Trends vs Forecast' 
+                    },
+                    { 
+                        url: 'https://placehold.co/1200x675/1a1a1a/d4af37?text=Seasonality+Decomposition', 
+                        caption: 'Seasonal Decomposition Breakdown' 
+                    },
+                    { 
+                        url: 'https://placehold.co/1200x675/1a1a1a/d4af37?text=Model+Accuracy+Metrics', 
+                        caption: 'Model Performance: 94% Accuracy' 
+                    },
+                    // Added 4th Image
+                    { 
+                        url: 'https://placehold.co/1200x675/1a1a1a/d4af37?text=Regional+Heatmap', 
+                        caption: 'Geographic Sales Distribution' 
+                    },
+                    // Added 5th Image
+                    { 
+                        url: 'https://placehold.co/1200x675/1a1a1a/d4af37?text=Category+Performance', 
+                        caption: 'Revenue by Product Category' 
+                    }
+                ],
+                
                 description: `
                     This project focused on optimizing inventory management for a mid-sized retail chain. By analyzing 3 years of historical transactional data, I identified seasonal trends and cyclical patterns that were previously overlooked.
                     <br><br>
@@ -631,6 +782,23 @@
                 category: 'Behavioral Analytics',
                 title: 'Customer Churn Analysis',
                 tags: ['SQL', 'Tableau', 'Segmentation'],
+                
+                // [!] REPLACE CHURN PROJECT IMAGES HERE
+                images: [
+                    { 
+                        url: 'https://placehold.co/1200x675/1a1a1a/d4af37?text=Churn+Dashboard+Overview', 
+                        caption: 'Executive Dashboard Overview' 
+                    },
+                    { 
+                        url: 'https://placehold.co/1200x675/1a1a1a/d4af37?text=Risk+Segmentation+Map', 
+                        caption: 'User Risk Segmentation' 
+                    },
+                    { 
+                        url: 'https://placehold.co/1200x675/1a1a1a/d4af37?text=Cohort+Retention+Analysis', 
+                        caption: 'Cohort Analysis of New Signups' 
+                    }
+                ],
+
                 description: `
                     In the subscription economy, retaining customers is often cheaper than acquiring new ones. This project aimed to identify early warning signs of customer attrition.
                     <br><br>
@@ -648,6 +816,19 @@
                 category: 'Association Rules',
                 title: 'Market Basket Analysis',
                 tags: ['R', 'Apriori', 'Data Mining'],
+                
+                // [!] REPLACE MARKET BASKET IMAGES HERE
+                images: [
+                    { 
+                        url: 'https://placehold.co/1200x675/1a1a1a/d4af37?text=Product+Network+Graph', 
+                        caption: 'Product Association Network' 
+                    },
+                    { 
+                        url: 'https://placehold.co/1200x675/1a1a1a/d4af37?text=Lift+&+Confidence+Matrix', 
+                        caption: 'Top 10 Rules by Lift' 
+                    }
+                ],
+
                 description: `
                     To increase the Average Order Value (AOV) for an e-commerce platform, I analyzed purchase bundles to find products that are frequently bought together.
                     <br><br>
@@ -665,6 +846,19 @@
                 category: 'Natural Language Processing',
                 title: 'Customer Sentiment Analysis',
                 tags: ['Python', 'NLTK', 'Visualization'],
+                
+                // [!] REPLACE SENTIMENT PROJECT IMAGES HERE
+                images: [
+                    { 
+                        url: 'https://placehold.co/1200x675/1a1a1a/d4af37?text=Sentiment+Trends', 
+                        caption: 'Sentiment Over Time' 
+                    },
+                    { 
+                        url: 'https://placehold.co/1200x675/1a1a1a/d4af37?text=Word+Cloud', 
+                        caption: 'Most Frequent Keywords' 
+                    }
+                ],
+
                 description: `
                     Understanding customer feedback is crucial for brand reputation. I scraped and analyzed over 50,000 product reviews to determine the overall sentiment (Positive, Negative, Neutral) trends over a 12-month period.
                     <br><br>
@@ -682,6 +876,19 @@
                 category: 'Anomaly Detection',
                 title: 'Financial Fraud Detection',
                 tags: ['Machine Learning', 'Isolation Forest', 'Finance'],
+                
+                // [!] REPLACE FRAUD PROJECT IMAGES HERE
+                images: [
+                    { 
+                        url: 'https://placehold.co/1200x675/1a1a1a/d4af37?text=Anomaly+Clusters', 
+                        caption: 'Clustering Fraudulent Transactions' 
+                    },
+                    { 
+                        url: 'https://placehold.co/1200x675/1a1a1a/d4af37?text=Confusion+Matrix', 
+                        caption: 'Detection Accuracy' 
+                    }
+                ],
+
                 description: `
                     In the fintech sector, detecting fraudulent transactions in real-time is paramount. I built an unsupervised learning model to flag suspicious activities based on transaction patterns.
                     <br><br>
@@ -699,6 +906,19 @@
                 category: 'Data Engineering',
                 title: 'Automated ETL Pipeline',
                 tags: ['AWS', 'Airflow', 'SQL'],
+                
+                // [!] REPLACE ETL PROJECT IMAGES HERE
+                images: [
+                    { 
+                        url: 'https://placehold.co/1200x675/1a1a1a/d4af37?text=DAG+Workflow', 
+                        caption: 'Airflow DAG Visualization' 
+                    },
+                    { 
+                        url: 'https://placehold.co/1200x675/1a1a1a/d4af37?text=Architecture+Diagram', 
+                        caption: 'AWS Infrastructure' 
+                    }
+                ],
+
                 description: `
                     To support a new BI dashboard, I engineered a robust ETL (Extract, Transform, Load) pipeline. This automated the flow of data from disparate CSV files and APIs into a central Redshift Data Warehouse.
                     <br><br>
@@ -713,6 +933,57 @@
                 impact: '100% Automation'
             }
         };
+
+        // --- REVIEWS DATA & LOGIC (RESTORED) ---
+        const initialReviews = [
+            {
+                name: "Ahmed Raza",
+                role: "CEO, GURR BITES",
+                message: "Saroor's analysis of our sells data uncovered patterns we had completely missed.",
+                rating: 5
+            },
+            {
+                name: "Elena Stone",
+                role: "Director, Retail Corp",
+                message: "The Tableau dashboards Saroor designed are now the first thing our executive team looks at every Monday morning. Exceptional clarity and insight.",
+                rating: 5
+            }
+        ];
+
+        function createReviewHTML(data) {
+            return `
+                <div class="luxury-card p-8 relative group animate-fade-in-up">
+                    <div class="absolute top-6 right-8 text-4xl opacity-20 font-serif text-[#d4af37]">"</div>
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-12 h-12 rounded-full bg-gray-800 border border-[#d4af37] flex items-center justify-center text-[#d4af37] font-bold text-xl uppercase">
+                            ${data.name.charAt(0)}
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-sm" style="color: var(--text-main);">${data.name}</h4>
+                            <p class="text-xs uppercase tracking-wider opacity-60" style="color: var(--text-muted);">${data.role}</p>
+                        </div>
+                    </div>
+                    <p class="text-sm font-light leading-relaxed mb-4" style="color: var(--text-muted);">
+                        ${data.message}
+                    </p>
+                    <div class="flex text-[#d4af37] text-xs gap-1">
+                        ${'<i class="fas fa-star"></i>'.repeat(data.rating)}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Initialize Reviews on Load
+        document.addEventListener('DOMContentLoaded', () => {
+            const grid = document.getElementById('reviews-grid');
+            if (grid) {
+                // Clear existing content to prevent duplicates if any
+                grid.innerHTML = '';
+                initialReviews.forEach(review => {
+                    grid.innerHTML += createReviewHTML(review);
+                });
+            }
+        });
 
         // --- TOGGLE PROJECTS LOGIC ---
         function toggleMoreProjects() {
@@ -733,6 +1004,56 @@
             }
         }
 
+        // --- SLIDER LOGIC ---
+        let currentSlide = 0;
+        let totalSlides = 0;
+
+        function initSlider(images) {
+            const track = document.getElementById('slider-track');
+            track.innerHTML = ''; // Clear existing
+            currentSlide = 0;
+            totalSlides = images.length;
+
+            if (totalSlides === 0) {
+                // Fallback if no images
+                track.innerHTML = `<div class="slide"><p class="text-gray-500">No snapshots available</p></div>`;
+                return;
+            }
+
+            // Create Slides
+            images.forEach(img => {
+                const slide = document.createElement('div');
+                slide.className = 'slide';
+                slide.innerHTML = `
+                    <img src="${img.url}" alt="${img.caption}">
+                    <div class="slide-caption">${img.caption}</div>
+                `;
+                track.appendChild(slide);
+            });
+
+            updateSliderPosition();
+        }
+
+        function moveSlide(direction) {
+            if (totalSlides <= 1) return; // No need to slide
+
+            currentSlide += direction;
+
+            // Loop logic
+            if (currentSlide >= totalSlides) {
+                currentSlide = 0;
+            } else if (currentSlide < 0) {
+                currentSlide = totalSlides - 1;
+            }
+
+            updateSliderPosition();
+        }
+
+        function updateSliderPosition() {
+            const track = document.getElementById('slider-track');
+            track.style.transform = `translateX(-${currentSlide * 100}%)`;
+        }
+
         // --- NAVIGATION LOGIC ---
         function openProject(projectId) {
             const data = projectsData[projectId];
@@ -743,6 +1064,9 @@
             document.getElementById('project-title').innerText = data.title;
             document.getElementById('project-description').innerHTML = data.description;
             document.getElementById('project-impact').innerText = data.impact;
+
+            // Initialize Slider
+            initSlider(data.images || []);
 
             // Tags
             const tagsContainer = document.getElementById('project-tags');
@@ -794,6 +1118,41 @@
                 // Re-enable scroll
                 document.body.style.overflow = 'auto';
             }, 500);
+        }
+
+        // --- INQUIRY BUTTON LOGIC ---
+        function handleInquiry() {
+            const email = "saroorq@gmail.com";
+            const btnText = document.getElementById("inquiry-text");
+            const originalText = "Send Inquiry";
+            
+            // 1. Open Gmail Compose in New Tab
+            const gmailUrl = "https://mail.google.com/mail/?view=cm&fs=1&to=" + email + "&su=Portfolio%20Inquiry";
+            window.open(gmailUrl, '_blank');
+            
+            // 2. Also Copy to clipboard (as a convenience)
+            const textArea = document.createElement("textarea");
+            textArea.value = email;
+            textArea.style.position = "fixed";  // Avoid scrolling to bottom
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+
+            try {
+                const successful = document.execCommand('copy');
+                if(successful) {
+                    btnText.innerText = "Opening Gmail...";
+                }
+            } catch (err) {
+                console.error('Fallback: Oops, unable to copy', err);
+            }
+
+            document.body.removeChild(textArea);
+
+            // Reset text after 3 seconds
+            setTimeout(() => {
+                btnText.innerText = originalText;
+            }, 3000);
         }
 
         // --- THREE.JS LUXURY THEME SETUP ---
